@@ -23,11 +23,25 @@ describe('parseHumanAmount', () => {
     expect(result.value).toBe(5_000_000);
   });
 
+  it('parses comma thousands separator', () => {
+    const result = parseHumanAmount('5,000,000');
+
+    expect(result.isEmpty).toBe(false);
+    expect(result.value).toBe(5_000_000);
+  });
+
   it('parses decimal comma', () => {
     const result = parseHumanAmount('18,5');
 
     expect(result.isEmpty).toBe(false);
     expect(result.value).toBe(18.5);
+  });
+
+  it('parses decimal ruble amount', () => {
+    const result = parseHumanAmount('5000000,50');
+
+    expect(result.isEmpty).toBe(false);
+    expect(result.value).toBe(5_000_000.5);
   });
 
   it('preserves negative values for field-level validation', () => {
