@@ -1,0 +1,17 @@
+{
+  "name": "tax-structure-calculator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && tsc -p tsconfig.web.json && node --experimental-strip-types scripts/build-web.ts",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node --experimental-strip-types --test src/lib/tax-engine/__tests__/*.test.ts",
+    "lint": "node --experimental-strip-types scripts/lint.ts"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5",
+    "typescript": "^5.8.3"
+  }
+}
