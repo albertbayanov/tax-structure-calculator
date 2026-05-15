@@ -46,14 +46,30 @@ npm run lint
 
 ## Если Vercel пишет `tsc: command not found`
 
-Это означает, что Vercel собирает коммит, где не установлены dev-зависимости с `typescript` и `vite`, либо собирает старую ветку. Проверьте в логе строку `Branch` и `Commit`: для Vite-версии в репозитории должен быть `package.json` с зависимостями `typescript`, `vite`, `@vitejs/plugin-react`, а также файл `vercel.json`.
+Сначала проверьте в build log строку `Cloning ... (Branch: ..., Commit: ...)`. Если там указан старый коммит `ce50e35`, Vercel собирает версию до добавления Vite, `typescript`, `vite` и `vercel.json`; такой деплой всегда падает на `tsc: command not found`.
+
+Актуальная Vite-версия должна содержать:
+
+- `package.json` с `typescript`, `vite` и `@vitejs/plugin-react` в `devDependencies`;
+- `vercel.json` с `installCommand`, `buildCommand` и `outputDirectory`;
+- `index.html`, `vite.config.ts`, `src/main.tsx` и `src/ui/App.tsx`.
 
 Что сделать:
 
-1. Убедитесь, что PR с Vite-версией смержен в ветку, которую деплоит Vercel, обычно `main`.
-2. В настройках проекта Vercel проверьте **Production Branch**. Она должна совпадать с веткой, куда попал этот код.
-3. Запустите redeploy после merge.
-4. Если в проекте Vercel вручную задан Install Command, поставьте `npm install --include=dev` или очистите поле, чтобы использовался `vercel.json`.
+1. В GitHub откройте репозиторий → **Code** → branch `main` и убедитесь, что там есть `vercel.json` и `vite.config.ts`.
+2. В GitHub проверьте, что последний commit в `main` новее `ce50e35`. Если `main` всё ещё на `ce50e35`, PR с Vite-кодом не попал в `main`.
+3. В Vercel откройте проект → **Settings** → **Git** и проверьте **Production Branch**. Она должна совпадать с веткой, куда смержен Vite-код.
+4. В Vercel запустите новый redeploy уже после того, как `main` указывает на новый commit.
+5. Если в Vercel вручную задан Install Command, поставьте `npm install --include=dev` или очистите поле, чтобы использовался `vercel.json`.
+
+Локально можно проверить head ветки перед деплоем:
+
+```bash
+git fetch origin
+git rev-parse origin/main
+```
+
+Вывод не должен быть `ce50e35...`.
 
 ## Важно
 
