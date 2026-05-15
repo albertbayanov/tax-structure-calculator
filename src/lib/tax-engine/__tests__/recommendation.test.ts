@@ -32,6 +32,6 @@ describe('recommendTaxStructure', () => {
     });
 
     expect(recommendation.recommendedEntity).toBeNull();
-    expect(recommendation.reason).toContain('No selected entity is applicable');
+    expect(recommendation.reason).toContain('нет применимых структур');
   });
 });

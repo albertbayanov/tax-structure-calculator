@@ -9,6 +9,14 @@ const DEFAULT_ENTITIES: readonly TaxEntity[] = [
   'personalFoundationWithZpif'
 ] as const;
 
+function formatRub(amount: number): string {
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'RUB',
+    maximumFractionDigits: Number.isInteger(amount) ? 0 : 2
+  }).format(amount);
+}
+
 export function recommendTaxStructure(input: RecommendationInput): RecommendationResult {
   const entities = input.entities ?? [...DEFAULT_ENTITIES];
   const results = entities.map((entity) => calculateTax({ ...input, entity }));
@@ -18,7 +26,7 @@ export function recommendTaxStructure(input: RecommendationInput): Recommendatio
     return {
       recommendedEntity: null,
       recommendedEntityLabel: null,
-      reason: 'No selected entity is applicable to the requested income type.',
+      reason: 'Для выбранного типа дохода нет применимых структур в текущей модели.',
       results,
       warnings: results.flatMap((result) => result.warnings)
     };
@@ -39,7 +47,7 @@ export function recommendTaxStructure(input: RecommendationInput): Recommendatio
   return {
     recommendedEntity: best.entity,
     recommendedEntityLabel: TAX_RULES_RU_2026.entities[best.entity],
-    reason: `${TAX_RULES_RU_2026.entities[best.entity]} has the lowest tax among applicable entities: ${best.taxAmount} RUB.`,
+    reason: `${TAX_RULES_RU_2026.entities[best.entity]} — минимальный налог среди применимых структур: ${formatRub(best.taxAmount)}.`,
     results,
     warnings: results.flatMap((result) => result.warnings)
   };
