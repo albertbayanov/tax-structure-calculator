@@ -38,11 +38,22 @@ npm run lint
    - Framework Preset: `Vite`
    - Build Command: `npm run build`
    - Output Directory: `dist`
-   - Install Command: `npm install`
+   - Install Command: `npm install --include=dev`
 6. В разделе Node.js Version выберите `24.x`, если Vercel не подхватит значение из `package.json`.
 7. Нажмите **Deploy**.
 
 Переменные окружения для текущей версии не нужны.
+
+## Если Vercel пишет `tsc: command not found`
+
+Это означает, что Vercel собирает коммит, где не установлены dev-зависимости с `typescript` и `vite`, либо собирает старую ветку. Проверьте в логе строку `Branch` и `Commit`: для Vite-версии в репозитории должен быть `package.json` с зависимостями `typescript`, `vite`, `@vitejs/plugin-react`, а также файл `vercel.json`.
+
+Что сделать:
+
+1. Убедитесь, что PR с Vite-версией смержен в ветку, которую деплоит Vercel, обычно `main`.
+2. В настройках проекта Vercel проверьте **Production Branch**. Она должна совпадать с веткой, куда попал этот код.
+3. Запустите redeploy после merge.
+4. Если в проекте Vercel вручную задан Install Command, поставьте `npm install --include=dev` или очистите поле, чтобы использовался `vercel.json`.
 
 ## Важно
 
