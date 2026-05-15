@@ -44,13 +44,19 @@ npm run lint
 
 Переменные окружения для текущей версии не нужны.
 
+## Почему build-зависимости лежат в `dependencies`
+
+Vercel preview и production могут отличаться настройками установки зависимостей. Если production-сборка запускает `npm install` с production-only режимом или в проекте выставлена переменная `NPM_CONFIG_PRODUCTION=true`, пакеты из `devDependencies` не устанавливаются, и команда `npm run build` падает с кодом 127 (`tsc` или `vite` не найдены).
+
+Поэтому `typescript`, `vite`, `@vitejs/plugin-react` и React type-пакеты указаны в `dependencies`. Это делает production build воспроизводимым даже при установке только production dependencies.
+
 ## Если Vercel пишет `tsc: command not found`
 
 Сначала проверьте в build log строку `Cloning ... (Branch: ..., Commit: ...)`. Если там указан старый коммит `ce50e35`, Vercel собирает версию до добавления Vite, `typescript`, `vite` и `vercel.json`; такой деплой всегда падает на `tsc: command not found`.
 
 Актуальная Vite-версия должна содержать:
 
-- `package.json` с `typescript`, `vite` и `@vitejs/plugin-react` в `devDependencies`;
+- `package.json` с `typescript`, `vite` и `@vitejs/plugin-react` в `dependencies`, чтобы production install тоже мог выполнить build;
 - `vercel.json` с `installCommand`, `buildCommand` и `outputDirectory`;
 - `index.html`, `vite.config.ts`, `src/main.tsx` и `src/ui/App.tsx`.
 
